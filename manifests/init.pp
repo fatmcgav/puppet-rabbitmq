@@ -24,7 +24,7 @@ class rabbitmq(
   $package_ensure             = $rabbitmq::params::package_ensure,
   $package_gpg_key            = $rabbitmq::params::package_gpg_key,
   $package_name               = $rabbitmq::params::package_name,
-  $package_provider           = $rabbitmq::params::package_provider,
+  $package_provider           = undef,
   $package_source             = undef,
   $repos_ensure               = $rabbitmq::params::repos_ensure,
   $manage_repos               = $rabbitmq::params::manage_repos,

@@ -5,11 +5,18 @@
 class rabbitmq::params {
 
   case $::osfamily {
+    'Archlinux': {
+      $package_ensure   = 'installed'
+      $package_name     = 'rabbitmq'
+      $service_name     = 'rabbitmq'
+      $rabbitmq_user    = 'rabbitmq'
+      $rabbitmq_group   = 'rabbitmq'
+      $rabbitmq_home    = '/var/lib/rabbitmq'
+    }
     'Debian': {
       $package_ensure   = 'installed'
       $package_name     = 'rabbitmq-server'
       $service_name     = 'rabbitmq-server'
-      $package_provider = 'apt'
       $rabbitmq_user    = 'rabbitmq'
       $rabbitmq_group   = 'rabbitmq'
       $rabbitmq_home    = '/var/lib/rabbitmq'
@@ -18,7 +25,6 @@ class rabbitmq::params {
       $package_ensure   = 'installed'
       $package_name     = 'rabbitmq'
       $service_name     = 'rabbitmq'
-      $package_provider = 'openbsd'
       $rabbitmq_user    = '_rabbitmq'
       $rabbitmq_group   = '_rabbitmq'
       $rabbitmq_home    = '/var/rabbitmq'
@@ -27,7 +33,6 @@ class rabbitmq::params {
       $package_ensure   = 'installed'
       $package_name     = 'rabbitmq-server'
       $service_name     = 'rabbitmq-server'
-      $package_provider = 'yum'
       $rabbitmq_user    = 'rabbitmq'
       $rabbitmq_group   = 'rabbitmq'
       $rabbitmq_home    = '/var/lib/rabbitmq'
@@ -36,7 +41,6 @@ class rabbitmq::params {
       $package_ensure   = 'installed'
       $package_name     = 'rabbitmq-server'
       $service_name     = 'rabbitmq-server'
-      $package_provider = 'zypper'
       $rabbitmq_user    = 'rabbitmq'
       $rabbitmq_group   = 'rabbitmq'
       $rabbitmq_home    = '/var/lib/rabbitmq'
