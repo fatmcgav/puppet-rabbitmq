@@ -9,21 +9,21 @@ class rabbitmq::repo::rhel(
 
   if $rabbitmq::erlang_source == 'rabbitmq' {
     yumrepo { 'rabbitmq_erlang':
-      ensure      => present,
-      description => 'RabbitMQ Erlang repository',
-      name        => 'rabbitmq_erlang',
-      baseurl     => 'https://packagecloud.io/rabbitmq/erlang/el/$releasever/$basearch',
-      enabled     => true,
-      gpgcheck    => false
+      ensure   => present,
+      descr    => 'RabbitMQ Erlang repository',
+      name     => 'rabbitmq_erlang',
+      baseurl  => 'https://packagecloud.io/rabbitmq/erlang/el/$releasever/$basearch',
+      enabled  => true,
+      gpgcheck => false
     }
   }
 
   yumrepo { 'rabbitmq':
-    ensure      => present,
-    description => 'RabbitMQ Server repository',
-    name        => 'rabbitmq_rabbitmq-server',
-    baseurl     => $location,
-    gpgkey      => $key_source,
-    enabled     => true
+    ensure  => present,
+    descr   => 'RabbitMQ Server repository',
+    name    => 'rabbitmq_rabbitmq-server',
+    baseurl => $location,
+    gpgkey  => $key_source,
+    enabled => true
   }
 }
