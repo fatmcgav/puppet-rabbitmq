@@ -7,6 +7,15 @@ class rabbitmq::repo::rhel(
 
   Class['rabbitmq::repo::rhel'] -> Package<| title == 'rabbitmq-server' |>
 
+  if $rabbitmq::erlang_source == 'rabbitmq' {
+    yumrepo { 'rabbitmq_erlang':
+      ensure  => present,
+      name    => 'rabbitmq_erlang',
+      baseurl => 'https://packagecloud.io/rabbitmq/erlang/el/$releasever/$basearch',
+      enabled => 1
+    }
+  }
+
   yumrepo { 'rabbitmq':
     ensure  => present,
     name    => 'rabbitmq_rabbitmq-server',
