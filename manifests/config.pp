@@ -22,7 +22,6 @@ class rabbitmq::config {
   $management_ssl             = $rabbitmq::management_ssl
   $management_hostname        = $rabbitmq::management_hostname
   $node_ip_address            = $rabbitmq::node_ip_address
-  $plugin_dir                 = $rabbitmq::plugin_dir
   $rabbitmq_user              = $rabbitmq::rabbitmq_user
   $rabbitmq_group             = $rabbitmq::rabbitmq_group
   $rabbitmq_home              = $rabbitmq::rabbitmq_home

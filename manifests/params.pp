@@ -1,4 +1,4 @@
-  # Class: rabbitmq::params
+# Class: rabbitmq::params
 #
 #   The RabbitMQ Module configuration settings.
 #
@@ -9,56 +9,41 @@ class rabbitmq::params {
       $package_ensure   = 'installed'
       $package_name     = 'rabbitmq'
       $service_name     = 'rabbitmq'
-      $package_provider = undef
-      $version          = '3.1.3-1'
       $rabbitmq_user    = 'rabbitmq'
       $rabbitmq_group   = 'rabbitmq'
       $rabbitmq_home    = '/var/lib/rabbitmq'
-      $plugin_dir       = "/usr/lib/rabbitmq/lib/rabbitmq_server-${version}/plugins"
     }
     'Debian': {
       $package_ensure   = 'installed'
       $package_name     = 'rabbitmq-server'
       $service_name     = 'rabbitmq-server'
-      $package_provider = 'apt'
-      $version          = '3.1.5'
       $rabbitmq_user    = 'rabbitmq'
       $rabbitmq_group   = 'rabbitmq'
       $rabbitmq_home    = '/var/lib/rabbitmq'
-      $plugin_dir       = "/usr/lib/rabbitmq/lib/rabbitmq_server-${version}/plugins"
     }
     'OpenBSD': {
       $package_ensure   = 'installed'
       $package_name     = 'rabbitmq'
       $service_name     = 'rabbitmq'
-      $package_provider = 'openbsd'
-      $version          = '3.4.2'
       $rabbitmq_user    = '_rabbitmq'
       $rabbitmq_group   = '_rabbitmq'
       $rabbitmq_home    = '/var/rabbitmq'
-      $plugin_dir       = '/usr/local/lib/rabbitmq/plugins'
     }
     'RedHat': {
       $package_ensure   = 'installed'
       $package_name     = 'rabbitmq-server'
       $service_name     = 'rabbitmq-server'
-      $package_provider = 'yum'
-      $version          = '3.1.5-1'
       $rabbitmq_user    = 'rabbitmq'
       $rabbitmq_group   = 'rabbitmq'
       $rabbitmq_home    = '/var/lib/rabbitmq'
-      $plugin_dir       = "/usr/lib/rabbitmq/lib/rabbitmq_server-${version}/plugins"
     }
     'SUSE': {
       $package_ensure   = 'installed'
       $package_name     = 'rabbitmq-server'
       $service_name     = 'rabbitmq-server'
-      $package_provider = 'zypper'
-      $version          = '3.1.5-1'
       $rabbitmq_user    = 'rabbitmq'
       $rabbitmq_group   = 'rabbitmq'
       $rabbitmq_home    = '/var/lib/rabbitmq'
-      $plugin_dir       = "/usr/lib/rabbitmq/lib/rabbitmq_server-${version}/plugins"
     }
     default: {
       fail("The ${module_name} module is not supported on an ${::osfamily} based system.")
@@ -72,7 +57,7 @@ class rabbitmq::params {
   $management_ssl              = true
   $package_apt_pin             = ''
   $package_gpg_key             = 'https://www.rabbitmq.com/rabbitmq-release-signing-key.asc'
-  $repos_ensure                = true
+  $repos_ensure                = false
   $manage_repos                = undef
   $service_ensure              = 'running'
   $service_manage              = true

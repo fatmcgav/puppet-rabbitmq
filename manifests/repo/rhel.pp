@@ -1,16 +1,17 @@
 # Class: rabbitmq::repo::rhel
-# Imports the gpg key if it doesn't already exist.
-class rabbitmq::repo::rhel {
+# Makes sure that the Packagecloud repo is installed
+class rabbitmq::repo::rhel(
+    $location       = 'https://packagecloud.io/rabbitmq/rabbitmq-server/el/$releasever/$basearch',
+    $key_source     = 'https://www.rabbitmq.com/rabbitmq-release-signing-key.asc',
+  ) {
 
-  if $rabbitmq::repos_ensure {
+  Class['rabbitmq::repo::rhel'] -> Package<| title == 'rabbitmq-server' |>
 
-    $package_gpg_key = $rabbitmq::package_gpg_key
-
-    Class['rabbitmq::repo::rhel'] -> Package<| title == 'rabbitmq-server' |>
-
-    exec { "rpm --import ${package_gpg_key}":
-      path   => ['/bin','/usr/bin','/sbin','/usr/sbin'],
-      unless => 'rpm -q gpg-pubkey-6026dfca-573adfde 2>/dev/null',
-    }
+  yumrepo { 'rabbitmq':
+    ensure  => present,
+    name    => 'rabbitmq_rabbitmq-server',
+    baseurl => $location,
+    gpgkey  => $key_source,
+    enabled => 1,
   }
 }
