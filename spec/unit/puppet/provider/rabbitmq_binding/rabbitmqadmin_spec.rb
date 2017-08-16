@@ -5,19 +5,14 @@ RSpec.configure do |config|
 end
 provider_class = Puppet::Type.type(:rabbitmq_binding).provider(:rabbitmqadmin)
 describe provider_class do
-  before :each do
-    @resource = Puppet::Type::Rabbitmq_binding.new(
-      {
-        :name             => 'source@target@/',
-        :destination_type => :queue,
-        :routing_key      => 'blablub',
-        :arguments        => {}
-      }
-    )
-    @provider = provider_class.new(@resource)
+
+  subject do
+    provider = provider_class
+    provider.initvars
+    provider
   end
 
-  describe "#instances" do
+  describe "self.instances" do
     it 'should return instances' do
       provider_class.expects(:rabbitmqctl).with('list_vhosts', '-q').returns <<-EOT
 /
@@ -78,8 +73,8 @@ EOT
     end
   end
 
-  describe "#prefetch" do
-    it "exists" do
+  describe "self.prefetch" do
+    it "fetches" do
       provider_class.expects(:rabbitmqctl).with('list_vhosts', '-q').returns <<-EOT
 /
 EOT
@@ -90,11 +85,9 @@ EOT
       provider_class.prefetch({})
     end
 
-    it "matches" do
-  Puppet::Util::Log.level = :debug
-  Puppet::Util::Log.newdestination(:console)
+    context 'with a matching resource' do
       # Test resource to match against
-      @resource = Puppet::Type::Rabbitmq_binding.new(
+      let(:binding) do
         {
           :name             => 'binding1',
           :source           => 'exchange1',
@@ -103,27 +96,79 @@ EOT
           :routing_key      => 'blablubd',
           :arguments        => {}
         }
-      )
+      end
 
-      provider_class.expects(:rabbitmqctl).with('list_vhosts', '-q').returns <<-EOT
+      let(:resource) do
+        Puppet::Type::Rabbitmq_binding.new(
+          # {
+            :name             => 'binding1',
+            :source           => 'exchange1',
+            :dest             => 'destqueue',
+            :destination_type => :queue,
+            :routing_key      => 'blablubd',
+            :arguments        => {}
+          # }
+        )
+      end
+      let(:resources) do
+        {
+          'binding1' => resource
+        }
+      end
+
+      it "matches" do
+    Puppet::Util::Log.level = :debug
+    Puppet::Util::Log.newdestination(:console)
+
+        subject.expects(:rabbitmqctl).with('list_vhosts', '-q').returns <<-EOT
 /
 EOT
-      provider_class.expects(:rabbitmqctl).with('list_bindings', '-q', '-p', '/', 'source_name', 'destination_name', 'destination_kind', 'routing_key', 'arguments').returns <<-EOT
+        subject.expects(:rabbitmqctl).with('list_bindings', '-q', '-p', '/', 'source_name', 'destination_name', 'destination_kind', 'routing_key', 'arguments').returns <<-EOT
 exchange\tdst_queue\tqueue\t*\t[]
 EOT
 
-      provider_class.prefetch({ "binding1" => @resource})
+        subject.prefetch(resources)
+        subject.expects(:new).with(binding).never
+      end
     end
   end
   
-  it 'should call rabbitmqadmin to create' do
-    @provider.expects(:rabbitmqadmin).with('declare', 'binding', '--vhost=/', '--user=guest', '--password=guest', '-c', '/etc/rabbitmq/rabbitmqadmin.conf', 'source=source', 'destination=target', 'arguments={}', 'routing_key=blablub', 'destination_type=queue')
-    @provider.create
+  describe 'when creating a resource' do
+    before :each do
+      @resource = Puppet::Type::Rabbitmq_binding.new(
+        {
+          :name             => 'source@target@/',
+          :destination_type => :queue,
+          :routing_key      => 'blablub',
+          :arguments        => {}
+        }
+      )
+      @provider = provider_class.new(@resource)
+    end
+
+    it 'should call rabbitmqadmin to create' do
+      @provider.expects(:rabbitmqadmin).with('declare', 'binding', '--vhost=/', '--user=guest', '--password=guest', '-c', '/etc/rabbitmq/rabbitmqadmin.conf', 'source=source', 'destination=target', 'arguments={}', 'routing_key=blablub', 'destination_type=queue')
+      @provider.create
+    end
   end
 
-  it 'should call rabbitmqadmin to destroy' do
-    @provider.expects(:rabbitmqadmin).with('delete', 'binding', '--vhost=/', '--user=guest', '--password=guest', '-c', '/etc/rabbitmq/rabbitmqadmin.conf', 'source=source', 'destination_type=queue', 'destination=target', 'properties_key=blablub')
-    @provider.destroy
+  describe 'when destroying a resource' do
+    before :each do
+      @resource = Puppet::Type::Rabbitmq_binding.new(
+        {
+          :name             => 'source@target@/',
+          :destination_type => :queue,
+          :routing_key      => 'blablub',
+          :arguments        => {}
+        }
+      )
+      @provider = provider_class.new(@resource)
+    end
+
+    it 'should call rabbitmqadmin to destroy' do
+      @provider.expects(:rabbitmqadmin).with('delete', 'binding', '--vhost=/', '--user=guest', '--password=guest', '-c', '/etc/rabbitmq/rabbitmqadmin.conf', 'source=source', 'destination_type=queue', 'destination=target', 'properties_key=blablub')
+      @provider.destroy
+    end
   end
 
   context 'specifying credentials' do

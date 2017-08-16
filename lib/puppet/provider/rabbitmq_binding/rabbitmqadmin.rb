@@ -15,6 +15,8 @@ Puppet::Type.type(:rabbitmq_binding).provide(:rabbitmqadmin) do
   end
   defaultfor :feature => :posix
 
+  mk_resource_methods
+
   def should_vhost
     if @should_vhost
       @should_vhost
@@ -60,20 +62,29 @@ Puppet::Type.type(:rabbitmq_binding).provide(:rabbitmqadmin) do
             :ensure           => :present,
             :name             => "%s@%s@%s@%s" % [source_name, destination_name, vhost, routing_key],
           }
+          Puppet.debug("Adding new resource: #{binding.inspect}")
           resources << new(binding) if binding[:name]
         end
       end
     end
+    Puppet.debug("Final resources = #{resources.inspect}")
     resources
   end
 
   def self.prefetch(resources)
     bindings = instances
-    resources.keys.each do |name|
-      Puppet.debug("Name = #{name}")
+    Puppet.debug("Bindings = #{bindings.inspect}")
+    resources.each do |name, resource|
+      Puppet.debug("Name = #{name}, resource = #{resource.inspect}")
       if provider = bindings.find{ |route| 
         Puppet.debug("Route = #{route.inspect}")
-        route.source == source && route.dest == dest && route.vhost == vhost && route.routing_key == routing_key }
+        Puppet.debug("Route methods = #{route.methods}")
+        Puppet.debug("Resource.source = #{resource[:source]}")
+        Puppet.debug("Route.source = #{route.source}")
+        route.source == resource[:source] && 
+          route.dest == resource[:dest] && 
+          route.vhost == resource[:vhost] && 
+          route.routing_key == resource[:routing_key] }
         resources[name].provider = provider
       end
     end
