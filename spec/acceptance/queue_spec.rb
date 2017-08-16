@@ -125,19 +125,23 @@ describe 'rabbitmq binding:' do
 
       rabbitmq_binding { 'binding 1':
         source           => 'exchange1',
+        dest             => 'queue1',
         user             => 'dan',
         password         => 'bar',
         destination_type => 'queue',
         routing_key      => 'test1',
+        vhost            => 'host1',
         ensure           => present,
       } ->
 
       rabbitmq_binding { 'binding 2':
         source           => 'exchange1',
+        dest             => 'queue1',
         user             => 'dan',
         password         => 'bar',
         destination_type => 'queue',
         routing_key      => 'test2',
+        vhost            => 'host1',
         ensure           => present,
       }
 
